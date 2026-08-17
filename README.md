@@ -1,1 +1,1 @@
-# A-Maze-ng
+# A-Maze-İng
