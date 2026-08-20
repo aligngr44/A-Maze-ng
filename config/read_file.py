@@ -16,7 +16,7 @@ def read_to_file(file: str) -> dict[str, str]:
     """Read a config file and return its raw KEY=VALUE pairs."""
     config: dict[str, str] = {}
     try:
-        with open(file, "r", encoding="utf-8") as f:
+        with open(file, "r", encoding="utf-8-sig") as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -26,7 +26,12 @@ def read_to_file(file: str) -> dict[str, str]:
                         f"Invalid line (must contain exactly one '='): {line}"
                     )
                 key, _, value = line.partition("=")
-                config[key.strip()] = value.strip()
+                key = key.strip()
+                if not key:
+                    raise ValueError(f"Invalid line (empty key): {line}")
+                if key in config:
+                    raise ValueError(f"Duplicate key '{key}' in config file")
+                config[key] = value.strip()
     except OSError as e:
         raise ValueError(f"Cannot read config file '{file}': {e}") from e
     except Exception as e:
@@ -41,7 +46,9 @@ def pars(config: dict[str, str]) -> Config:
     """Convert the raw string dictionary into a type-safe Config object."""
     missing: set[str] = REQUIRED_KEYS - config.keys()
     if missing:
-        raise ValueError(f"Missing required key(s): {', '.join(sorted(missing))}")
+        raise ValueError(
+            f"Missing required key(s): {', '.join(sorted(missing))}"
+        )
 
     try:
         width = int(config["WIDTH"])
@@ -49,7 +56,13 @@ def pars(config: dict[str, str]) -> Config:
         entry_x, entry_y = (int(v) for v in config["ENTRY"].split(","))
         exit_x, exit_y = (int(v) for v in config["EXIT"].split(","))
         output_file = config["OUTPUT_FILE"]
-        perfect = config["PERFECT"].strip().lower() == "true"
+        perfect_raw = config["PERFECT"].strip().lower()
+        if perfect_raw not in ("true", "false"):
+            raise ValueError(
+                f"PERFECT must be 'True' or 'False', "
+                f"got: {config['PERFECT']!r}"
+            )
+        perfect = perfect_raw == "true"
     except ValueError as e:
         raise ValueError(f"Invalid config value: {e}") from e
 
