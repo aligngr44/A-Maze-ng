@@ -15,15 +15,22 @@ class Config:
 def read_to_file(file: str) -> dict[str, str]:
     """Read a config file and return its raw KEY=VALUE pairs."""
     config: dict[str, str] = {}
-    with open(file, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.count("=") != 1:
-                raise ValueError(f"Invalid line (must contain exactly one '='): {line}")
-            key, _, value = line.partition("=")
-            config[key.strip()] = value.strip()
+    try:
+        with open(file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if line.count("=") != 1:
+                    raise ValueError(
+                        f"Invalid line (must contain exactly one '='): {line}"
+                    )
+                key, _, value = line.partition("=")
+                config[key.strip()] = value.strip()
+    except OSError as e:
+        raise ValueError(f"Cannot read config file '{file}': {e}") from e
+    except Exception as e:
+        raise ValueError(f"Error reading config file '{file}': {e}") from e
     return config
 
 
