@@ -105,26 +105,56 @@ class MazeGenerator:
         return count
 
 
-    def find_dead_ends(self) -> list[tuple[int, int]]:
-        dead_ends = []
+    def find_dead_cell(self) -> list[tuple[int, int]]:
+        dead_cell = []
 
         for y in range(self.height):
             for x in range(self.width):
                 if self.count_open_paths(x, y) == 1:
-                    dead_ends.append((x, y))
+                    dead_cell.append((x, y))
         
-        return dead_ends
+        return dead_cell
 
 
+    def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
+        closed = []
+
+        for nx, ny in self.get_neighbors(x, y):
+            if nx == x + 1 and self.grid[y][x] & 2:
+                closed.append((nx, ny))
+            
+            elif nx == x - 1 and self.grid[y][x] & 8:
+                closed.append((nx, ny))
+            
+            elif ny == ny + 1 and self.grid[y][x] & 4:
+                closed.append((nx, ny))
+            
+            elif ny == ny - 1 and self.grid[y][x] & 1:
+                closed.append((nx, ny))
+            
+        return closed
+    
+
+    def generate_imperfect(self) -> None:
+        self.generate_perfect()
+
+        dead_cells = self.find_dead_cell()
+
+        for x, y in dead_cells:
+            closed_neigbors = self.get_closed_neighbors(x, y)
+
+            if closed_neigbors:
+                nx, ny = random.choice(closed_neigbors)
+                self.remove_wall(x, y, nx, ny)
 
 
+if __name__ == "__main__":
 
-maze = MazeGenerator(4,3)
-# maze.remove_wall(3,1,2,1)
-# visited = {(1, 0), (0, 1)}
+    maze = MazeGenerator(8,6)
+    # maze.remove_wall(3,1,2,1)
+    # visited = {(1, 0), (0, 1)}
 
-# print(maze.get_unvisited_neighbors(1, 1, visited ))
-maze.generate_perfect()
-for row in maze.grid:
-    print(row)
-print("dead ends:" , maze.find_dead_ends())
+    # print(maze.get_unvisited_neighbors(1, 1, visited ))
+    maze.generate_perfect()
+    for row in maze.grid:
+        print(row)
