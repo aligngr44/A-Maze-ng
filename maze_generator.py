@@ -116,7 +116,7 @@ class MazeGenerator:
         return dead_cell
 
 
-    def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
+    def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]: 
         closed = []
 
         for nx, ny in self.get_neighbors(x, y):
