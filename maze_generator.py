@@ -2,9 +2,10 @@ import random
 
 
 class MazeGenerator:
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int, seed: int | None = None) -> None:
         self.width = width
         self.height = height
+        self.random = random.Random(seed)
 
         self.grid = []
 
@@ -75,7 +76,7 @@ class MazeGenerator:
             unvisited = self.get_unvisited_neighbors(x,y, visited)
 
             if unvisited:
-                next_x, next_y = random.choice(unvisited)
+                next_x, next_y = self.random.choice(unvisited)
 
                 self.remove_wall(x, y, next_x, next_y)
                 
@@ -126,10 +127,10 @@ class MazeGenerator:
             elif nx == x - 1 and self.grid[y][x] & 8:
                 closed.append((nx, ny))
             
-            elif ny == ny + 1 and self.grid[y][x] & 4:
+            elif ny == y + 1 and self.grid[y][x] & 4:
                 closed.append((nx, ny))
             
-            elif ny == ny - 1 and self.grid[y][x] & 1:
+            elif ny == y - 1 and self.grid[y][x] & 1:
                 closed.append((nx, ny))
             
         return closed
@@ -144,17 +145,28 @@ class MazeGenerator:
             closed_neigbors = self.get_closed_neighbors(x, y)
 
             if closed_neigbors:
-                nx, ny = random.choice(closed_neigbors)
+                nx, ny = self.random.choice(closed_neigbors)
                 self.remove_wall(x, y, nx, ny)
+
+
+
+    def write_grid(self, filename: str) -> None:
+        with open(filename, "w") as file:
+            for row in self.grid:
+                for cell in row:
+                    file.write(format(cell, "X"))
+                file.write("\n")
 
 
 if __name__ == "__main__":
 
-    maze = MazeGenerator(8,6)
+    maze = MazeGenerator(8,6, 42)
     # maze.remove_wall(3,1,2,1)
     # visited = {(1, 0), (0, 1)}
 
     # print(maze.get_unvisited_neighbors(1, 1, visited ))
-    maze.generate_perfect()
-    for row in maze.grid:
-        print(row)
+    maze.generate_imperfect()
+    maze.write_grid("maze.txt")
+    # print(maze.find_dead_cell())
+    # for row in maze.grid:
+    #     print(row)

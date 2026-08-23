@@ -1,27 +1,31 @@
 import sys
-
-from config.read_file import read_to_file, pars
+import config
 from maze_generator import MazeGenerator
-from visualization.ascii import display_ascii
 
 
 def main() -> None:
-    config_path = sys.argv[1]
 
-    raw_config = read_to_file(config_path)
-    cfg = pars(raw_config)
-
-    maze = MazeGenerator(cfg.width, cfg.height)
-    if cfg.perfect:
-        maze.generate_perfect()
-    else:
-        maze.generate_imperfect()   # Bilal'in eklediği fonksiyon, henüz test etmedik
+    if len(sys.argv) != 2:
+        print("Usage: python3 a_maze_ing.py config.txt")
+        return
+    
     try:
-        with open(cfg.output_file, "w") as f:
-            f.write(display_ascii(maze.grid, cfg))
-    except Exception as e:
-        print(e)
-    print(display_ascii(maze.grid, cfg))
+        raw_config = config.read_to_file(sys.argv[1])
+        cfg = config.pars(raw_config)
+
+        config.validate_config(cfg)
+
+        maze = MazeGenerator(cfg.width, cfg.height, cfg.seed)
+
+        if cfg.perfect:
+            maze.generate_perfect()
+        else:
+            maze.generate_imperfect()
+        
+        maze.write_grid(cfg.output_file)
+
+    except ValueError as Error:
+        print(f"Error: {Error}")
 
 
 if __name__ == "__main__":
