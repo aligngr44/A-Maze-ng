@@ -2,9 +2,10 @@ import random
 
 
 class MazeGenerator:
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int, seed: int | None = None) -> None:
         self.width = width
         self.height = height
+        self.random = random.Random(seed)
 
         self.grid = []
 
@@ -75,7 +76,7 @@ class MazeGenerator:
             unvisited = self.get_unvisited_neighbors(x,y, visited)
 
             if unvisited:
-                next_x, next_y = random.choice(unvisited)
+                next_x, next_y = self.random.choice(unvisited)
 
                 self.remove_wall(x, y, next_x, next_y)
                 
@@ -144,7 +145,7 @@ class MazeGenerator:
             closed_neigbors = self.get_closed_neighbors(x, y)
 
             if closed_neigbors:
-                nx, ny = random.choice(closed_neigbors)
+                nx, ny = self.random.choice(closed_neigbors)
                 self.remove_wall(x, y, nx, ny)
 
 
@@ -159,7 +160,7 @@ class MazeGenerator:
 
 if __name__ == "__main__":
 
-    maze = MazeGenerator(8,6)
+    maze = MazeGenerator(8,6, 42)
     # maze.remove_wall(3,1,2,1)
     # visited = {(1, 0), (0, 1)}
 

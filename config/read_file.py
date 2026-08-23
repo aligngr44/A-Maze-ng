@@ -10,6 +10,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
+    seed: int | None
 
 
 def read_to_file(file: str) -> dict[str, str]:
@@ -63,6 +64,14 @@ def pars(config: dict[str, str]) -> Config:
                 f"got: {config['PERFECT']!r}"
             )
         perfect = perfect_raw == "true"
+
+        seed_raw = config.get("SEED")
+
+        if seed_raw is None or seed_raw == "":
+            seed = None
+        else:
+            seed = int(seed_raw)
+
     except ValueError as e:
         raise ValueError(f"Invalid config value: {e}") from e
 
@@ -73,4 +82,5 @@ def pars(config: dict[str, str]) -> Config:
         exit=(exit_x, exit_y),
         output_file=output_file,
         perfect=perfect,
+        seed = seed,
     )
