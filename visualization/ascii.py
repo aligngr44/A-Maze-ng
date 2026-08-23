@@ -15,6 +15,10 @@ def display_ascii(grid: list[list[int]], cfg: Config) -> str:
         for x in range(cfg.width):
             cell = grid[y][x]
             ch = " "
+            if (x, y) == cfg.entry:
+                ch = "S"
+            elif (x, y) == cfg.exit:
+                ch = "X"
             east_wall = "|" if cell & EAST else " "
             row_mid += ch + " " + east_wall
 
