@@ -55,12 +55,12 @@ class MazeGenerator:
 
 
     Pattern_42 = [
-    "1010111",
-    "1010001",
+    "1000111",
+    "1000001",
     "1110111",
     "0010100",
-    "0010100",
     "0010111",
+    "0000000",
     ]
 
     def create_42_pattern(self, start_x: int, start_y: int) -> None:
