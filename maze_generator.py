@@ -6,6 +6,7 @@ class MazeGenerator:
         self.width = width
         self.height = height
         self.random = random.Random(seed)
+        self.blocked_cells: set[tuple[int, int]] = set()
 
         self.grid = []
 
@@ -53,18 +54,58 @@ class MazeGenerator:
         return neighbors
 
 
+    Pattern_42 = [
+    "1010111",
+    "1010001",
+    "1110111",
+    "0010100",
+    "0010100",
+    "0010111",
+    ]
+
+    def create_42_pattern(self, start_x: int, start_y: int) -> None:
+        for pattern_y, row in enumerate(self.Pattern_42):
+            for pattern_x, value in enumerate(row):
+                if value == "1":
+                    x = start_x + pattern_x
+                    y = start_y + pattern_y
+
+                    if 0 <= x < self.width and 0 <= y < self.height:
+                        self.blocked_cells.add((x,y))
+
+
+    def place_42_pattern(self) -> None:
+        pattern_height = len(self.Pattern_42)
+        pattern_width = len(self.Pattern_42[0]) 
+
+
+        min_width = pattern_width + 4
+        min_height = pattern_height + 4
+
+
+        if self.width < min_width or self.height < min_height:
+            print("Warning: maze is too small for the 42 pattern")
+            return
+
+        start_x = (self.width - pattern_width) // 2
+        start_y = (self.height - pattern_height) // 2
+
+        self.create_42_pattern(start_x, start_y)
+
+
     def get_unvisited_neighbors(self,x: int, y: int, visited: set[tuple[int, int]]) -> list[tuple[int, int]]:
         neighbors = self.get_neighbors(x,y)
         unvisited = []
 
         for neighbor in neighbors:
-            if neighbor not in visited:
+            if neighbor not in visited and neighbor not in self.blocked_cells:
                 unvisited.append(neighbor)
 
         return unvisited
 
     
     def generate_perfect(self) -> None:
+        self.place_42_pattern()
         start = (0,0)
 
         visited = {start}
@@ -121,7 +162,10 @@ class MazeGenerator:
         closed = []
 
         for nx, ny in self.get_neighbors(x, y):
-            if nx == x + 1 and self.grid[y][x] & 2:
+            if (nx, ny) in self.blocked_cells:
+                continue
+
+            elif nx == x + 1 and self.grid[y][x] & 2:
                 closed.append((nx, ny))
             
             elif nx == x - 1 and self.grid[y][x] & 8:
@@ -160,7 +204,7 @@ class MazeGenerator:
 
 if __name__ == "__main__":
 
-    maze = MazeGenerator(8,6, 42)
+    maze = MazeGenerator(8,6)
     # maze.remove_wall(3,1,2,1)
     # visited = {(1, 0), (0, 1)}
 
