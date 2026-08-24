@@ -50,3 +50,15 @@ def shortest_path(grid, width, height, entry, exit_):
 
     directions.reverse()
     return "".join(directions)
+
+
+def path_cells(entry: tuple[int, int], path: str) -> set[tuple[int, int]]:
+    x, y = entry
+    cells = {entry}
+
+    for direction in path:
+        _, dx, dy = DIRECTIONS[direction]
+        x, y = x + dx, y + dy
+        cells.add((x, y))
+
+    return cells
