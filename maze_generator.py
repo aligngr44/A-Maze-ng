@@ -55,12 +55,12 @@ class MazeGenerator:
 
 
     Pattern_42 = [
-    "01010111",
-    "01010001",
-    "01110111",
-    "00010100",
-    "00010100",
-    "00010111",
+    "1010111",
+    "1010001",
+    "1110111",
+    "0010100",
+    "0010100",
+    "0010111",
     ]
 
     def create_42_pattern(self, start_x: int, start_y: int) -> None:
@@ -76,9 +76,14 @@ class MazeGenerator:
 
     def place_42_pattern(self) -> None:
         pattern_height = len(self.Pattern_42)
-        pattern_width = len(self.Pattern_42[0])
+        pattern_width = len(self.Pattern_42[0]) 
 
-        if self.width < pattern_width or self.height < pattern_height:
+
+        min_width = pattern_width + 4
+        min_height = pattern_height + 4
+
+
+        if self.width < min_width or self.height < min_height:
             print("Warning: maze is too small for the 42 pattern")
             return
 

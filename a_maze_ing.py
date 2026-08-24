@@ -19,9 +19,12 @@ def main() -> None:
 
         maze = MazeGenerator(cfg.width, cfg.height, cfg.seed)
 
+        print("PERFECT VALUE:", cfg.perfect)
         if cfg.perfect:
+            print("RUNNING PERFECT")
             maze.generate_perfect()
         else:
+            print("RUNNING imPERFECT")
             maze.generate_imperfect()
         maze.write_grid(cfg.output_file)
 
