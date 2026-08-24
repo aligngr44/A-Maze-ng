@@ -4,7 +4,7 @@ import config
 from maze_generator import MazeGenerator
 from visualization.mlx_view import run_mlx_view
 from visualization.pathfinding import shortest_path
-from visualization import display_ascii
+from visualization import print_pixel_grid, build_pixel_grid, path_pixels
 
 def main() -> None:
 
@@ -28,10 +28,10 @@ def main() -> None:
             maze.generate_imperfect()
         maze.write_grid(cfg.output_file)
 
-        # path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
+        #path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
         # run_mlx_view(maze, cfg, path)
-
-        print(display_ascii(maze.grid, cfg))
+        x = build_pixel_grid(maze.grid, cfg)
+        print(print_pixel_grid(x, cfg, None))
 
     except ValueError as Error:
         print(f"Error: {Error}")
