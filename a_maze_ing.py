@@ -19,16 +19,13 @@ def main() -> None:
 
         maze = MazeGenerator(cfg.width, cfg.height, cfg.seed)
 
-        print("PERFECT VALUE:", cfg.perfect)
         if cfg.perfect:
-            print("RUNNING PERFECT")
             maze.generate_perfect()
         else:
-            print("RUNNING imPERFECT")
             maze.generate_imperfect()
         maze.write_grid(cfg.output_file)
 
-        #path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
+        # path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
         # run_mlx_view(maze, cfg, path)
         x = build_pixel_grid(maze.grid, cfg)
         print(print_pixel_grid(x, cfg, None))

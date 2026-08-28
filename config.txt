@@ -1,10 +1,10 @@
 # A-Maze-ing - ornek konfigurasyon dosyasi
 # '#' ile baslayan satirlar yorumdur, okuma sirasinda yok sayilir
 
-WIDTH=20
+WIDTH=25
 HEIGHT=20
 ENTRY=0,0
-EXIT=19,14
+EXIT=10,8
 OUTPUT_FILE=maze.txt
 PERFECT=false
 SEED=
