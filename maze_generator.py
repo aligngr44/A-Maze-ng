@@ -1,13 +1,17 @@
 import random
-
+from config.validate import check_entry_exit_not_blocked
 
 class MazeGenerator:
-    def __init__(self, width: int, height: int, seed: int | None = None) -> None:
+    def __init__(
+        self,
+        width: int,
+        height: int,
+        seed: int | None = None,
+    ) -> None:
         self.width = width
         self.height = height
         self.random = random.Random(seed)
         self.blocked_cells: set[tuple[int, int]] = set()
-
         self.grid = []
 
         for _ in range(height):

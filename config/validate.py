@@ -49,3 +49,12 @@ def validate_config(cfg: Config) -> None:
 
     if errors:
         raise ValueError("Config validation errors: " + "; ".join(errors))
+
+
+def check_entry_exit_not_blocked(
+    entry: tuple[int, int],
+    exit_: tuple[int, int],
+    blocked_cells: set[tuple[int, int]],
+) -> None:
+    if entry in blocked_cells or exit_ in blocked_cells:
+        raise ValueError("Entry or exit overlaps with the '42' pattern")
