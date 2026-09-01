@@ -54,15 +54,12 @@ class MazeGenerator:
         return neighbors
 
     Pattern_42 = [
-        "00110001100",
-        "01111011110",
-        "11111111111",
-        "11111111111",
-        "01111111110",
-        "00111111100",
-        "00011111000",
-        "00001110000",
-        "00000100000",
+    "1000111",
+    "1000001",
+    "1110111",
+    "0010100",
+    "0010111",
+    "0000000",
     ]
 
 
@@ -159,35 +156,6 @@ class MazeGenerator:
                     dead_cell.append((x, y))
         
         return dead_cell
-
-
-
-    # def has_open_3x3(self) -> bool:
-    #     for y in range(self.height - 2):
-    #         for x in range(self.width - 2):
-
-    #             fully_open = True
-
-    #             for dy in range(3):
-    #                 for dx in range(2):
-    #                     cell_x = x + dx
-    #                     cell_y = y + dy
-
-    #                     if self.grid[cell_y][cell_x] & 2:
-    #                         fully_open = False
-
-    #             for dy in range(2):
-    #                 for dx in range(3):
-    #                     cell_x = x + dx
-    #                     cell_y = y + dy
-
-    #                     if self.grid[cell_y][cell_x] & 4:
-    #                         fully_open = False
-
-    #             if fully_open:
-    #                 return True
-
-    #     return False
 
 
     def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]: 

@@ -23,10 +23,18 @@ def main() -> None:
             maze.generate_perfect()
         else:
             maze.generate_imperfect()
+
+        path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
+
         maze.write_grid(cfg.output_file)
 
-        # path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
-        # run_mlx_view(maze, cfg, path)
+        with open(cfg.output_file, "a") as file:
+            file.write("\n")
+            file.write(f"Entry: {cfg.entry[0]},{cfg.entry[1]}\n")
+            file.write(f"Exit: {cfg.exit[0]},{cfg.exit[1]}\n")
+            file.write(f"Path: {path}\n")
+
+
         x = build_pixel_grid(maze.grid, cfg)
         print(print_pixel_grid(x, cfg, None))
 
