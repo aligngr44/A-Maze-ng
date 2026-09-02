@@ -56,7 +56,6 @@ class MazeGenerator:
 
         return neighbors
 
-
     Pattern_42 = [
     "1000111",
     "1000001",
@@ -65,6 +64,7 @@ class MazeGenerator:
     "0010111",
     "0000000",
     ]
+
 
     def create_42_pattern(self, start_x: int, start_y: int) -> None:
         for pattern_y, row in enumerate(self.Pattern_42):
@@ -207,13 +207,57 @@ class MazeGenerator:
 
 if __name__ == "__main__":
 
-    maze = MazeGenerator(8,6)
+    # maze = MazeGenerator(25,20)
     # maze.remove_wall(3,1,2,1)
     # visited = {(1, 0), (0, 1)}
 
     # print(maze.get_unvisited_neighbors(1, 1, visited ))
-    maze.generate_imperfect()
-    maze.write_grid("maze.txt")
+    # maze.generate_imperfect()
+    # maze.write_grid("maze.txt")
     # print(maze.find_dead_cell())
     # for row in maze.grid:
     #     print(row)
+
+
+    # for i in range(0,100):
+    #     maze = MazeGenerator(25,20,i)
+    #     maze.generate_imperfect()
+    #     if maze.has_open_3x3() == True:
+    #         print(f"true geldi bu seed de {i}")
+    #     else:
+    #         print(f"sıkıntı yok seed: {i}")
+
+    #     sizes = [
+    #     (1, 1),
+    #     (2, 2),
+    #     (3, 3),
+    #     (5, 5),
+    #     (8, 6),
+    #     (25, 20),
+    # ]
+
+    #     for width, height in sizes:
+    #         print(f"\nTEST: {width}x{height}")
+
+    #         maze = MazeGenerator(width, height, 42)
+
+    #         try:
+    #             maze.generate_imperfect()
+    #             print("Perfect OK")
+    #         except Exception as error:
+    #             print("Perfect ERROR:", error)
+
+
+    maze1 = MazeGenerator(25, 20, 42)
+    maze1.generate_imperfect()
+
+    maze2 = MazeGenerator(25, 20, 42)
+    maze2.generate_imperfect()
+
+    print("Same seed, same imperfect maze:", maze1.grid == maze2.grid)
+
+    maze3 = MazeGenerator(25, 20, 99)
+    maze3.generate_imperfect()
+
+    print("Different seed, different imperfect maze:", maze1.grid != maze3.grid)
+            
