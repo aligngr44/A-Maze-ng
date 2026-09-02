@@ -17,12 +17,18 @@ def main() -> None:
 
         config.validate_config(cfg)
 
-        maze = MazeGenerator(cfg.width, cfg.height, cfg.seed)
+        maze = MazeGenerator(cfg.width, cfg.height, cfg.seed,)
 
         if cfg.perfect:
             maze.generate_perfect()
+            config.validate.check_entry_exit_not_blocked(cfg.entry, cfg.exit, maze.blocked_cells)
         else:
             maze.generate_imperfect()
+            config.validate.check_entry_exit_not_blocked(cfg.entry, cfg.exit, maze.blocked_cells)
+        maze.write_grid(cfg.output_file)
+
+        path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
+        # run_mlx_view(maze, cfg, path)
 
         path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
 
@@ -36,7 +42,7 @@ def main() -> None:
 
 
         x = build_pixel_grid(maze.grid, cfg)
-        print(print_pixel_grid(x, cfg, None))
+        print(print_pixel_grid(x, cfg, path))
 
     except ValueError as Error:
         print(f"Error: {Error}")
