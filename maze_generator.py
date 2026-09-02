@@ -1,5 +1,4 @@
 import random
-from config.validate import check_entry_exit_not_blocked
 
 class MazeGenerator:
     def __init__(
