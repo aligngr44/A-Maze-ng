@@ -4,9 +4,9 @@
 WIDTH=11
 HEIGHT=10
 ENTRY=0,0
-EXIT=10,9
+EXIT=9,9
 OUTPUT_FILE=maze.txt
-PERFECT=true
-SEED=31
+PERFECT=false
+SEED=
 # Zorunlu olmayan, ekstra anahtarlara ornek (subject izin veriyor):
  
