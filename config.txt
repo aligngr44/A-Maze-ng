@@ -7,6 +7,6 @@ ENTRY=0,0
 EXIT=9,9
 OUTPUT_FILE=maze.txt
 PERFECT=false
-SEED=23
+SEED=
 # Zorunlu olmayan, ekstra anahtarlara ornek (subject izin veriyor):
  

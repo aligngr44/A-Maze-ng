@@ -4,7 +4,7 @@ import config
 from config.read_file import Config
 from maze_generator import MazeGenerator
 from visualization.pathfinding import shortest_path
-from visualization import print_pixel_grid, build_pixel_grid
+from visualization import print_pixel_grid, build_pixel_grid, wall_color
 
 
 def generate_maze(cfg: Config, seed: int | None) -> MazeGenerator:
@@ -27,12 +27,14 @@ def generate_maze(cfg: Config, seed: int | None) -> MazeGenerator:
 
 def run_menu(maze: MazeGenerator, cfg: Config) -> None:
     show_path = False
+    color_index = 0
     seed = cfg.seed
+
 
     while True:
         path = shortest_path(maze.grid, cfg.width, cfg.height, cfg.entry, cfg.exit)
         pixels = build_pixel_grid(maze.grid, cfg, maze.blocked_cells)
-        print_pixel_grid(pixels, cfg, path if show_path else None)
+        print_pixel_grid(pixels, cfg, color_index, path if show_path else None)
 
         print("=== A-Maze-ing ===")
         print("1. Re-generate a new maze")
@@ -55,7 +57,7 @@ def run_menu(maze: MazeGenerator, cfg: Config) -> None:
         elif choice == "2":
             show_path = not show_path
         elif choice == "3":
-            print("Rotate the wall colours: not implemented yet.")
+            color_index += 1
         elif choice == "4":
             return
         else:

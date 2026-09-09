@@ -66,18 +66,24 @@ def hex_to_rgb(color: int) -> tuple[int, int, int]:
     b = color & 0xFF
     return (r, g, b)
 
-FLOOR_BG = bg(*hex_to_rgb(0x000000))    # BACKGROUND
-WALL_BG = bg(*hex_to_rgb(0xB185DB))     # WALL_COLOR
-ENTRY_BG = bg(*hex_to_rgb(0xFFD23F))    # ENTRY_COLOR
-EXIT_BG = bg(*hex_to_rgb(0xFF3333))     # EXIT_COLOR
-PATH_BG = bg(*hex_to_rgb(0xAAAAAA))     # PATH_COLOR (bir sonraki adımda kullanacağız)
-PATTERN_BG = bg(*hex_to_rgb(0xFFFFFF))   # "42" deseni rengi (subject örneğindeki gri)
+FLOOR_BG = bg(*hex_to_rgb(0x000000))
+ENTRY_BG = bg(*hex_to_rgb(0xFFD23F))
+EXIT_BG = bg(*hex_to_rgb(0xFF3333))
+PATH_BG = bg(*hex_to_rgb(0xAAAAAA))
+PATTERN_BG = bg(*hex_to_rgb(0xFFFFFF))
+
+WALL_PALETTE = [0xB185DB, 0xFF8C42, 0x2EC4B6, 0xE71D6E]
+
+def wall_color(color_index: int) -> str:
+    hex_color = WALL_PALETTE[color_index % len(WALL_PALETTE)]
+    return bg(*hex_to_rgb(hex_color))
 
 
-def print_pixel_grid(pixels: list[list[str]], cfg: Config, path: str | None = None) -> str:
+def print_pixel_grid(pixels: list[list[str]], cfg: Config, color_index: int, path: str | None = None) -> None:
     entry_px = (2 * cfg.entry[0] + 1, 2 * cfg.entry[1] + 1)
     exit_px = (2 * cfg.exit[0] + 1, 2 * cfg.exit[1] + 1)
     solved = path_pixels(cfg.entry, path) if path else set()
+    wall_bg = wall_color(color_index)
 
     for py, row in enumerate(pixels):
         line = ""
@@ -89,7 +95,7 @@ def print_pixel_grid(pixels: list[list[str]], cfg: Config, path: str | None = No
             elif (px, py) in solved:
                 color = PATH_BG
             elif kind == "wall":
-                color = WALL_BG
+                color = wall_bg
             elif kind == "pattern":
                 color = PATTERN_BG
             else:
