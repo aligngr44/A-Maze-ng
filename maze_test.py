@@ -9,7 +9,7 @@ import pytest
 
 from config.read_file import Config, pars, read_to_file
 from config.validate import check_entry_exit_not_blocked, validate_config
-from maze_generator import MazeGenerator
+from mazegen import MazeGenerator
 from visualization.pathfinding import shortest_path
 
 NORTH, EAST, SOUTH, WEST = 1, 2, 4, 8

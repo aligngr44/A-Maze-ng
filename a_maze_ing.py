@@ -8,7 +8,7 @@ import sys
 
 import config
 from config.read_file import Config
-from maze_generator import MazeGenerator
+from mazegen import MazeGenerator
 from visualization.pathfinding import shortest_path
 from visualization import print_pixel_grid, build_pixel_grid
 

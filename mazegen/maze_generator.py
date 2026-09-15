@@ -5,6 +5,7 @@ bit 0 = North, bit 1 = East, bit 2 = South, bit 3 = West (bit set = closed).
 """
 
 import random
+from collections import deque
 
 
 class MazeGenerator:
@@ -214,3 +215,70 @@ class MazeGenerator:
                 for cell in row:
                     file.write(format(cell, "X"))
                 file.write("\n")
+
+    def get_open_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
+        """Return neighbors of (x, y) reachable through an open wall."""
+        open_neighbors = []
+
+        for nx, ny in self.get_neighbors(x, y):
+            if nx == x + 1 and not self.grid[y][x] & 2:
+                open_neighbors.append((nx, ny))
+
+            elif nx == x - 1 and not self.grid[y][x] & 8:
+                open_neighbors.append((nx, ny))
+
+            elif ny == y + 1 and not self.grid[y][x] & 4:
+                open_neighbors.append((nx, ny))
+
+            elif ny == y - 1 and not self.grid[y][x] & 1:
+                open_neighbors.append((nx, ny))
+
+        return open_neighbors
+
+    def get_solution(
+        self, start: tuple[int, int], exit: tuple[int, int]
+    ) -> list[tuple[int, int]]:
+        """Return the shortest cell path from start to exit (BFS), or []."""
+        start_x, start_y = start
+        exit_x, exit_y = exit
+
+        if not (
+            0 <= start_x < self.width
+            and 0 <= start_y < self.height
+            and 0 <= exit_x < self.width
+            and 0 <= exit_y < self.height
+        ):
+            return []
+
+        if start in self.blocked_cells or exit in self.blocked_cells:
+            return []
+
+        queue = deque([start])
+        visited = {start}
+        parent: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
+
+        while queue:
+            x, y = queue.popleft()
+
+            if (x, y) == exit:
+                break
+
+            for neighbor in self.get_open_neighbors(x, y):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = (x, y)
+                    queue.append(neighbor)
+
+        if exit not in parent:
+            return []
+
+        path = []
+        current: tuple[int, int] | None = exit
+
+        while current is not None:
+            path.append(current)
+            current = parent[current]
+
+        path.reverse()
+
+        return path
