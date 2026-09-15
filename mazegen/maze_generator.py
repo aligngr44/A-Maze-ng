@@ -1,38 +1,19 @@
-"""Maze generation core: builds a grid-based maze using a DFS backtracker.
-
-The grid is stored as one integer per cell, each bit marking a closed wall:
-bit 0 = North, bit 1 = East, bit 2 = South, bit 3 = West (bit set = closed).
-"""
-
 import random
 from collections import deque
 
 
 class MazeGenerator:
-    """Generates and stores a rectangular maze as a grid of wall bitmasks."""
-
-    Pattern_42 = [
-        "0000000",
-        "1000111",
-        "1000001",
-        "1110111",
-        "0010100",
-        "0010111",
-        "0000000",
-    ]
-
     def __init__(
         self,
         width: int,
         height: int,
         seed: int | None = None,
     ) -> None:
-        """Create an all-walls-closed grid of the given size."""
         self.width = width
         self.height = height
         self.random = random.Random(seed)
         self.blocked_cells: set[tuple[int, int]] = set()
-        self.grid: list[list[int]] = []
+        self.grid = []
 
         for _ in range(height):
             row = []
@@ -43,7 +24,6 @@ class MazeGenerator:
             self.grid.append(row)
 
     def remove_wall(self, x1: int, y1: int, x2: int, y2: int) -> None:
-        """Open the shared wall between two adjacent cells, on both sides."""
         if x2 == x1 + 1:
             self.grid[y1][x1] &= ~2
             self.grid[y2][x2] &= ~8
@@ -58,15 +38,15 @@ class MazeGenerator:
 
         elif y2 == y1 - 1:
             self.grid[y1][x1] &= ~1
-            self.grid[y2][x2] &= ~4
+            self.grid[y2][x2] &= ~4 
+    
 
     def get_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
-        """Return the in-grid cells adjacent to (x, y), ignoring walls."""
         neighbors = []
 
         if y > 0:
             neighbors.append((x, y - 1))
-
+        
         if x < self.width - 1:
             neighbors.append((x + 1, y))
 
@@ -78,8 +58,18 @@ class MazeGenerator:
 
         return neighbors
 
+    Pattern_42 = [
+    "0000000",
+    "1000111",
+    "1000001",
+    "1110111",
+    "0010100",
+    "0010111",
+    "0000000",
+    ]
+
+
     def create_42_pattern(self, start_x: int, start_y: int) -> None:
-        """Mark the "42" pattern cells as blocked, from (start_x, start_y)."""
         for pattern_y, row in enumerate(self.Pattern_42):
             for pattern_x, value in enumerate(row):
                 if value == "1":
@@ -87,15 +77,17 @@ class MazeGenerator:
                     y = start_y + pattern_y
 
                     if 0 <= x < self.width and 0 <= y < self.height:
-                        self.blocked_cells.add((x, y))
+                        self.blocked_cells.add((x,y))
+
 
     def place_42_pattern(self) -> None:
-        """Centre the "42" pattern, or warn if the maze is too small."""
         pattern_height = len(self.Pattern_42)
-        pattern_width = len(self.Pattern_42[0])
+        pattern_width = len(self.Pattern_42[0]) 
+
 
         min_width = pattern_width + 4
         min_height = pattern_height + 4
+
 
         if self.width < min_width or self.height < min_height:
             print("Warning: maze is too small for the 42 pattern")
@@ -106,11 +98,9 @@ class MazeGenerator:
 
         self.create_42_pattern(start_x, start_y)
 
-    def get_unvisited_neighbors(
-        self, x: int, y: int, visited: set[tuple[int, int]]
-    ) -> list[tuple[int, int]]:
-        """Return neighbors of (x, y) that are neither visited nor blocked."""
-        neighbors = self.get_neighbors(x, y)
+
+    def get_unvisited_neighbors(self,x: int, y: int, visited: set[tuple[int, int]]) -> list[tuple[int, int]]:
+        neighbors = self.get_neighbors(x,y)
         unvisited = []
 
         for neighbor in neighbors:
@@ -119,62 +109,62 @@ class MazeGenerator:
 
         return unvisited
 
+    
     def generate_perfect(self) -> None:
-        """Carve a perfect maze: a spanning tree, single path, no loops."""
         self.place_42_pattern()
-        start = (0, 0)
+        start = (0,0)
 
         visited = {start}
         stack = [start]
 
         while stack:
-            x, y = stack[-1]
+            x,y = stack[-1]
 
-            unvisited = self.get_unvisited_neighbors(x, y, visited)
+            unvisited = self.get_unvisited_neighbors(x,y, visited)
 
             if unvisited:
                 next_x, next_y = self.random.choice(unvisited)
 
                 self.remove_wall(x, y, next_x, next_y)
-
+                
                 visited.add((next_x, next_y))
                 stack.append((next_x, next_y))
 
             else:
                 stack.pop()
 
+
     def count_open_paths(self, x: int, y: int) -> int:
-        """Count how many of the 4 walls of cell (x, y) are open."""
         cell = self.grid[y][x]
         count = 0
 
         if not cell & 1:
             count += 1
-
+        
         if not cell & 2:
             count += 1
-
+        
         if not cell & 4:
             count += 1
-
+        
         if not cell & 8:
             count += 1
-
+        
         return count
 
+
     def find_dead_cell(self) -> list[tuple[int, int]]:
-        """Return every cell that has exactly one open wall (a dead end)."""
         dead_cell = []
 
         for y in range(self.height):
             for x in range(self.width):
                 if self.count_open_paths(x, y) == 1:
                     dead_cell.append((x, y))
-
+        
         return dead_cell
 
-    def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
-        """Return neighbors of (x, y) separated from it by a closed wall."""
+
+    def get_closed_neighbors(self, x: int, y: int) -> list[tuple[int, int]]: 
         closed = []
 
         for nx, ny in self.get_neighbors(x, y):
@@ -183,20 +173,20 @@ class MazeGenerator:
 
             elif nx == x + 1 and self.grid[y][x] & 2:
                 closed.append((nx, ny))
-
+            
             elif nx == x - 1 and self.grid[y][x] & 8:
                 closed.append((nx, ny))
-
+            
             elif ny == y + 1 and self.grid[y][x] & 4:
                 closed.append((nx, ny))
-
+            
             elif ny == y - 1 and self.grid[y][x] & 1:
                 closed.append((nx, ny))
-
+            
         return closed
+    
 
     def generate_imperfect(self) -> None:
-        """Carve a perfect maze, then open one wall per dead end."""
         self.generate_perfect()
 
         dead_cells = self.find_dead_cell()
@@ -208,19 +198,22 @@ class MazeGenerator:
                 nx, ny = self.random.choice(closed_neigbors)
                 self.remove_wall(x, y, nx, ny)
 
+
+
     def write_grid(self, filename: str) -> None:
-        """Write the grid to filename, one uppercase hex digit per cell."""
         with open(filename, "w") as file:
             for row in self.grid:
                 for cell in row:
                     file.write(format(cell, "X"))
                 file.write("\n")
 
+
+
     def get_open_neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
-        """Return neighbors of (x, y) reachable through an open wall."""
         open_neighbors = []
 
         for nx, ny in self.get_neighbors(x, y):
+
             if nx == x + 1 and not self.grid[y][x] & 2:
                 open_neighbors.append((nx, ny))
 
@@ -235,14 +228,12 @@ class MazeGenerator:
 
         return open_neighbors
 
-    def get_solution(
-        self, start: tuple[int, int], exit: tuple[int, int]
-    ) -> list[tuple[int, int]]:
-        """Return the shortest cell path from start to exit (BFS), or []."""
+
+    def get_solution(self, start: tuple[int, int], exit: tuple[int, int]) -> list[tuple[int, int]]:
         start_x, start_y = start
         exit_x, exit_y = exit
 
-        if not (
+        if not(
             0 <= start_x < self.width
             and 0 <= start_y < self.height
             and 0 <= exit_x < self.width
@@ -253,9 +244,14 @@ class MazeGenerator:
         if start in self.blocked_cells or exit in self.blocked_cells:
             return []
 
+
         queue = deque([start])
         visited = {start}
-        parent: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
+        parent:  dict[
+            tuple[int, int],
+            tuple[int, int] | None
+        ] = {start: None}
+
 
         while queue:
             x, y = queue.popleft()
@@ -263,17 +259,18 @@ class MazeGenerator:
             if (x, y) == exit:
                 break
 
-            for neighbor in self.get_open_neighbors(x, y):
+            for neighbor in self.get_open_neighbors(x,y):
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    parent[neighbor] = (x, y)
+                    parent[neighbor] = (x,y)
                     queue.append(neighbor)
-
+        
         if exit not in parent:
             return []
+        
 
         path = []
-        current: tuple[int, int] | None = exit
+        current: tuple[int, int]| None = exit
 
         while current is not None:
             path.append(current)
