@@ -56,5 +56,6 @@ def check_entry_exit_not_blocked(
     exit_: tuple[int, int],
     blocked_cells: set[tuple[int, int]],
 ) -> None:
+    """Raise ValueError if entry or exit falls on a blocked '42' cell."""
     if entry in blocked_cells or exit_ in blocked_cells:
         raise ValueError("Entry or exit overlaps with the '42' pattern")

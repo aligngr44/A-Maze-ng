@@ -1,3 +1,5 @@
+"""Terminal ASCII rendering of the maze: pixel grid, colours, printing."""
+
 from config.read_file import Config
 from visualization.pathfinding import DIRECTIONS
 
@@ -11,14 +13,17 @@ RESET = "\033[0m"
 
 
 def fg(r: int, g: int, b: int) -> str:
+    """Return the ANSI escape code setting the terminal foreground colour."""
     return f"\033[38;2;{r};{g};{b}m"
 
 
 def bg(r: int, g: int, b: int) -> str:
+    """Return the ANSI escape code setting the terminal background colour."""
     return f"\033[48;2;{r};{g};{b}m"
 
 
 def path_pixels(entry: tuple[int, int], path: str) -> set[tuple[int, int]]:
+    """Return the pixel-grid coordinates covered by the solution path."""
     x, y = 2 * entry[0] + 1, 2 * entry[1] + 1
     pixels = {(x, y)}
 
@@ -37,6 +42,7 @@ def build_pixel_grid(
     cfg: Config,
     blocked_cells: set[tuple[int, int]] | None = None,
 ) -> list[list[str]]:
+    """Expand the cell grid into a wall/floor/pattern pixel grid."""
     pw = 2 * cfg.width + 1
     ph = 2 * cfg.height + 1
     pixels = [["wall" for _ in range(pw)] for _ in range(ph)]
@@ -61,10 +67,12 @@ def build_pixel_grid(
 
 
 def hex_to_rgb(color: int) -> tuple[int, int, int]:
+    """Split a 0xRRGGBB integer into an (r, g, b) tuple."""
     r = (color >> 16) & 0xFF
     g = (color >> 8) & 0xFF
     b = color & 0xFF
     return (r, g, b)
+
 
 FLOOR_BG = bg(*hex_to_rgb(0x000000))
 ENTRY_BG = bg(*hex_to_rgb(0xFFD23F))
@@ -74,12 +82,20 @@ PATTERN_BG = bg(*hex_to_rgb(0xFFFFFF))
 
 WALL_PALETTE = [0xB185DB, 0xFF8C42, 0x2EC4B6, 0xE71D6E]
 
+
 def wall_color(color_index: int) -> str:
+    """Cycle through WALL_PALETTE and return the background colour code."""
     hex_color = WALL_PALETTE[color_index % len(WALL_PALETTE)]
     return bg(*hex_to_rgb(hex_color))
 
 
-def print_pixel_grid(pixels: list[list[str]], cfg: Config, color_index: int, path: str | None = None) -> None:
+def print_pixel_grid(
+    pixels: list[list[str]],
+    cfg: Config,
+    color_index: int,
+    path: str | None = None,
+) -> None:
+    """Print the pixel grid, highlighting entry, exit and the solution path."""
     entry_px = (2 * cfg.entry[0] + 1, 2 * cfg.entry[1] + 1)
     exit_px = (2 * cfg.exit[0] + 1, 2 * cfg.exit[1] + 1)
     solved = path_pixels(cfg.entry, path) if path else set()

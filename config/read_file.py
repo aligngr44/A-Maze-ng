@@ -82,5 +82,5 @@ def pars(config: dict[str, str]) -> Config:
         exit=(exit_x, exit_y),
         output_file=output_file,
         perfect=perfect,
-        seed = seed,
+        seed=seed,
     )

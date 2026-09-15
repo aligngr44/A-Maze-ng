@@ -1,3 +1,5 @@
+"""Config package: read, parse and validate the maze configuration file."""
+
 from .read_file import read_to_file, pars
 from .validate import validate_config
 

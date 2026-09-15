@@ -1,5 +1,6 @@
+"""Shortest-path finding over the maze grid (BFS from entry to exit)."""
+
 from collections import deque
-from config.read_file import Config
 
 NORTH, EAST, SOUTH, WEST = 1, 2, 4, 8
 
@@ -11,30 +12,41 @@ DIRECTIONS = {
 }
 
 
-def get_open_neighbors(grid, width, height, x, y):
-    cell = grid[y][x]          # 1) bu hücrenin değerini al
-    result = []             # 2) sonuçları biriktireceğin boş liste
+def get_open_neighbors(
+    grid: list[list[int]], width: int, height: int, x: int, y: int
+) -> list[tuple[str, tuple[int, int]]]:
+    """Return (direction, coordinates) for each open, in-bounds neighbor."""
+    cell = grid[y][x]  # 1) bu hücrenin değerini al
+    result = []  # 2) sonuçları biriktireceğin boş liste
 
     for direction, (bit, dx, dy) in DIRECTIONS.items():
-        if not (cell & bit):                          # 3) bu yönün duvarı açık mı?
-            nx, ny = dx + x, dy + y             # 4) komşunun koordinatını hesapla
-            if 0 <= nx < width and 0 <= ny < height:      # 5) sınır içinde mi kontrolü
+        if not (cell & bit):  # 3) bu yönün duvarı açık mı?
+            nx, ny = dx + x, dy + y  # 4) komşunun koordinatını hesapla
+            if 0 <= nx < width and 0 <= ny < height:  # 5) sınır içinde mi
                 result.append((direction, (nx, ny)))
 
     return result
 
 
-def shortest_path(grid, width, height, entry, exit_):
+def shortest_path(
+    grid: list[list[int]],
+    width: int,
+    height: int,
+    entry: tuple[int, int],
+    exit_: tuple[int, int],
+) -> str:
+    """Return the shortest entry-to-exit path as N/E/S/W letters."""
     visited = {entry}
     queue = deque([entry])
-    came_from = {}
+    came_from: dict[tuple[int, int], tuple[tuple[int, int], str]] = {}
     while queue:
         current = queue.popleft()
 
         if current == exit_:
             break
 
-        for direction, neighbor in get_open_neighbors(grid, width, height, *current):
+        neighbors = get_open_neighbors(grid, width, height, *current)
+        for direction, neighbor in neighbors:
             if neighbor not in visited:
                 visited.add(neighbor)
                 came_from[neighbor] = (current, direction)
@@ -53,6 +65,7 @@ def shortest_path(grid, width, height, entry, exit_):
 
 
 def path_cells(entry: tuple[int, int], path: str) -> set[tuple[int, int]]:
+    """Return every grid cell visited while walking path from entry."""
     x, y = entry
     cells = {entry}
 
