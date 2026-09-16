@@ -147,25 +147,88 @@ Hücreler satır satır, her hücre için bir hexadecimal karakter (4 bitlik duv
 
 ## Yeniden Kullanılabilir Modül (mazegen)
 
-Labirent üretim mantığı, CLI, config parser ve görselleştirme kodundan bağımsız, kendi başına duran bir `MazeGenerator` sınıfı içinde (`mazegen` paketi) toplanmıştır; böylece `pip` ile kurulup başka bir projede import edilebilir.
+Labirent üretim algoritması, ana programdan ve görselleştirme kısmından bağımsız olarak `mazegen` isimli ayrı bir Python paketi içinde tutulur. Paket, `MazeGenerator` sınıfını dışarı açar ve `pip` ile kurulduktan sonra başka Python projelerinde doğrudan kullanılabilir.
 
 ```python
 from mazegen import MazeGenerator
 
-gen = MazeGenerator(width=20, height=15, entry=(0, 0), exit_=(19, 14), seed=42)
-gen.generate_perfect()          # PERFECT modu; imperfect için gen.generate_imperfect()
-grid = gen.grid                 # üretilen yapıya erişim (bitmask grid)
-path = gen.shortest_path()      # en az bir çözüme (N/E/S/W) erişim
+# 20x15 boyutunda, seed değeri 42 olan bir üretici oluştur
+gen = MazeGenerator(width=20, height=15, seed=42)
+
+# Perfect maze üret
+gen.generate_perfect()
+
+# Imperfect maze üretmek için:
+# gen.generate_imperfect()
+
+# Üretilen hexadecimal bitmask grid'e eriş
+grid = gen.grid
+
+# Başlangıç ile çıkış arasındaki çözüm yolunu bul
+path = gen.get_solution((0, 0), (19, 14))
+
+print(path)
+```
+
+`get_solution()` bulunan yolu `N/E/S/W` karakterleri olarak değil, başlangıçtan çıkışa kadar gidilen hücrelerin `(x, y)` koordinatlarından oluşan bir liste olarak döndürür.
+
+Örneğin:
+
+```python
+[
+    (0, 0),
+    (1, 0),
+    (1, 1),
+    (2, 1),
+]
+```
+
+Üretilen grid ayrıca doğrudan bir dosyaya yazılabilir:
+
+```python
+gen.write_grid("maze.txt")
 ```
 
 ### Paketi build etme
 
+Paketleme ayarları repository kökündeki `pyproject.toml` dosyasında bulunur. Proje Python `setuptools` kullanılarak paketlenir.
+
+Önce `build` aracı kurulur:
+
 ```bash
 pip install build
+```
+
+Ardından repository'nin kök dizininde:
+
+```bash
 python -m build
 ```
 
-Bu komut, repository'nin kökünde `mazegen-*.whl` ve `mazegen-*.tar.gz` dosyalarını üretir (paketleme yapılandırması `pyproject.toml` içinde tanımlıdır). Değerlendirme sırasında paket, verilen kaynaklardan bir virtualenv içinde yeniden build edilebilir olmalıdır.
+komutu çalıştırılır.
+
+Build başarılı olduğunda `dist/` klasörü oluşturulur ve içerisinde paket dosyaları bulunur:
+
+```text
+dist/
+├── mazegen-1.0.0-py3-none-any.whl
+└── mazegen-1.0.0.tar.gz
+```
+
+Wheel paketi başka bir sanal ortamda şu şekilde kurulabilir:
+
+```bash
+pip install dist/mazegen-1.0.0-py3-none-any.whl
+```
+
+Kurulumun başarılı olduğu şu şekilde test edilebilir:
+
+```bash
+python3 -c "from mazegen import MazeGenerator; print(MazeGenerator)"
+```
+
+Bu sayede labirent üretme mantığı ana `a_maze_ing.py`, config parser veya görselleştirme koduna ihtiyaç duymadan bağımsız bir Python modülü olarak yeniden kullanılabilir.
+
 
 ### Lisans
 
