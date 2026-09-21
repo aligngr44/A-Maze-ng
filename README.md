@@ -2,10 +2,11 @@
 
 *This project has been created as part of the 42 curriculum by bigungor, algungor.*
 
+> Not: Subject bu satırın tam olarak bu İngilizce kalıpla ("This project has been created as part of the 42 curriculum by ...") yazılmasını istiyor; bu yüzden README'nin geri kalanı Türkçe olsa da bu ilk satır olduğu gibi bırakılmalı.
 
 ## Açıklama (Description)
 
-**A-Maze-ing**, 42 School'un "A-Maze-ing" subject'i için geliştirilmiş bir Python labirent (maze) üretici projesidir. Basit bir `config.txt` dosyası verildiğinde program, ya **perfect maze** (giriş ile çıkış arasında tam olarak tek bir yol, hiç döngü yok) ya da **imperfect / Pac-Man tarzı board** (tamamen bağlantılı, döngülü, köşeleri ve merkezi açık — kovalanan bir oyuncunun her zaman alternatif rotası olan) üretir. Üretilen labirent hexadecimal (onaltılık) formatta bir çıktı dosyasına yazılır, tamamen kapalı hücrelerden oluşan görünür bir "42" deseni içerir ve terminalde (ASCII/ANSI) ya da MLX (MiniLibX) ile grafiksel bir pencerede görselleştirilebilir. Labirent üretim mantığının kendisi, ileride başka projelerde import edilip yeniden kullanılabilmesi için ayrı, bağımsız bir paket (`mazegen`) haline getirilmiştir.
+**A-Maze-ing**, 42 School'un "A-Maze-ing" subject'i için geliştirilmiş bir Python labirent (maze) üretici projesidir. Basit bir `config.txt` dosyası verildiğinde program, ya **perfect maze** (giriş ile çıkış arasında tam olarak tek bir yol, hiç döngü yok) ya da **imperfect / Pac-Man tarzı board** (tamamen bağlantılı, döngülü, köşeleri ve merkezi açık — kovalanan bir oyuncunun her zaman alternatif rotası olan) üretir. Üretilen labirent hexadecimal (onaltılık) formatta bir çıktı dosyasına yazılır, tamamen kapalı hücrelerden oluşan görünür bir "42" deseni içerir ve terminalde ANSI truecolor renkli bir ızgara olarak görselleştirilebilir. Labirent üretim mantığının kendisi, ileride başka projelerde import edilip yeniden kullanılabilmesi için ayrı, bağımsız bir paket (`mazegen`) haline getirilmiştir.
 
 ## Kurulum ve Çalıştırma (Instructions)
 
@@ -22,10 +23,11 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 make install
 ```
 
-`make install`, `requirements.txt` içindeki bağımlılıkları (flake8, mypy, pytest ve varsa MLX binding'i) `pip` ile sanal ortama kurar:
+`make install`, gerekli araçları (flake8, mypy, pytest) doğrudan `pip` ile sanal ortama kurar — repoda ayrı bir `requirements.txt` yoktur:
 
 ```bash
-pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install flake8 mypy pytest
 ```
 
 ### Programı çalıştırma
@@ -147,88 +149,29 @@ Hücreler satır satır, her hücre için bir hexadecimal karakter (4 bitlik duv
 
 ## Yeniden Kullanılabilir Modül (mazegen)
 
-Labirent üretim algoritması, ana programdan ve görselleştirme kısmından bağımsız olarak `mazegen` isimli ayrı bir Python paketi içinde tutulur. Paket, `MazeGenerator` sınıfını dışarı açar ve `pip` ile kurulduktan sonra başka Python projelerinde doğrudan kullanılabilir.
+Labirent üretim mantığı, CLI, config parser ve görselleştirme kodundan bağımsız, kendi başına duran bir `MazeGenerator` sınıfı içinde (`mazegen` paketi) toplanmıştır; böylece `pip` ile kurulup başka bir projede import edilebilir.
 
 ```python
 from mazegen import MazeGenerator
 
-# 20x15 boyutunda, seed değeri 42 olan bir üretici oluştur
 gen = MazeGenerator(width=20, height=15, seed=42)
+gen.generate_perfect()                       # PERFECT modu; imperfect için gen.generate_imperfect()
 
-# Perfect maze üret
-gen.generate_perfect()
-
-# Imperfect maze üretmek için:
-# gen.generate_imperfect()
-
-# Üretilen hexadecimal bitmask grid'e eriş
-grid = gen.grid
-
-# Başlangıç ile çıkış arasındaki çözüm yolunu bul
-path = gen.get_solution((0, 0), (19, 14))
-
-print(path)
-```
-
-`get_solution()` bulunan yolu `N/E/S/W` karakterleri olarak değil, başlangıçtan çıkışa kadar gidilen hücrelerin `(x, y)` koordinatlarından oluşan bir liste olarak döndürür.
-
-Örneğin:
-
-```python
-[
-    (0, 0),
-    (1, 0),
-    (1, 1),
-    (2, 1),
-]
-```
-
-Üretilen grid ayrıca doğrudan bir dosyaya yazılabilir:
-
-```python
-gen.write_grid("maze.txt")
+grid = gen.grid                              # üretilen yapıya erişim (bitmask grid)
+path = gen.get_solution((0, 0), (19, 14))    # en az bir çözüme erişim: (x, y) hücrelerinin listesi
+gen.write_grid("maze.txt")                   # grid'i doğrudan bir dosyaya yazabilme
 ```
 
 ### Paketi build etme
 
-Paketleme ayarları repository kökündeki `pyproject.toml` dosyasında bulunur. Proje Python `setuptools` kullanılarak paketlenir.
-
-Önce `build` aracı kurulur:
-
 ```bash
 pip install build
+python -m build --outdir .
 ```
 
-Ardından repository'nin kök dizininde:
+Bu komut `mazegen-*.whl` ve `mazegen-*.tar.gz` dosyalarını üretir (paketleme yapılandırması `pyproject.toml` içinde tanımlıdır).
 
-```bash
-python -m build
-```
-
-komutu çalıştırılır.
-
-Build başarılı olduğunda `dist/` klasörü oluşturulur ve içerisinde paket dosyaları bulunur:
-
-```text
-dist/
-├── mazegen-1.0.0-py3-none-any.whl
-└── mazegen-1.0.0.tar.gz
-```
-
-Wheel paketi başka bir sanal ortamda şu şekilde kurulabilir:
-
-```bash
-pip install dist/mazegen-1.0.0-py3-none-any.whl
-```
-
-Kurulumun başarılı olduğu şu şekilde test edilebilir:
-
-```bash
-python3 -c "from mazegen import MazeGenerator; print(MazeGenerator)"
-```
-
-Bu sayede labirent üretme mantığı ana `a_maze_ing.py`, config parser veya görselleştirme koduna ihtiyaç duymadan bağımsız bir Python modülü olarak yeniden kullanılabilir.
-
+> **Dikkat:** Subject, paket dosyasının **repository'nin kökünde** bulunmasını şart koşuyor. `python -m build` varsayılan olarak `dist/` klasörüne yazar — bu yüzden `--outdir .` ile doğrudan köke build edin, ya da build ettikten sonra `.whl`/`.tar.gz` dosyasını `dist/`'ten köke taşıyıp commit'leyin. Değerlendirme sırasında paket, verilen kaynaklardan bir virtualenv içinde yeniden build edilebilir olmalıdır.
 
 ### Lisans
 
@@ -236,9 +179,14 @@ Modül, repository kökündeki `LICENSE.md` dosyasında belirtilen **MIT Lisans�
 
 ## Görselleştirme (Visualization)
 
-- **Terminal render:** Bitmask'ten oluşturulan çift-çözünürlüklü piksel ızgarası üzerinden ANSI truecolor blok render'ı; en kısa yol için bir overlay (üst katman) desteği.
-- **Grafiksel render:** MLX (MiniLibX) ile açılan bir pencere; çizim, MLX render döngüsü (`mlx_loop_hook`) içinde hücre hücre yapılır. MLX 8 haneli ARGB renk formatı ister ve yalnızca gerçek bir GPU/ekranı olan Linux/X11 ortamında çalışır (Xvfb/Codespace'te çalışmaz).
-- **Kullanıcı etkileşimleri:** yeni bir labirent üretme, en kısa yolu gösterme/gizleme, duvar renklerini değiştirme — her iki render modunda da mevcuttur.
+Subject'in izin verdiği iki seçenekten (terminal ASCII / MLX) **terminal render** tercih edildi; proje MLX (MiniLibX) kullanmıyor.
+
+- **Terminal render:** Bitmask'ten oluşturulan çift-çözünürlüklü piksel ızgarası (`visualization/ascii.py`) üzerinden ANSI truecolor blok render'ı. Duvarlar, giriş, çıkış ve "42" deseni ayrı renklerle gösterilir; en kısa yol için bir overlay (üst katman) desteği vardır.
+- **Kullanıcı etkileşimleri (`a_maze_ing.py` içindeki interaktif menü):**
+  1. Yeni bir labirent üret (seed varsa bir artırılarak yeniden üretilir),
+  2. En kısa yolu göster/gizle,
+  3. Duvar renklerini döndür (`WALL_PALETTE` içindeki renkler arasında geçiş),
+  4. Çıkış.
 
 ## Ekip ve Proje Yönetimi (Team & Project Management)
 
@@ -250,16 +198,19 @@ Modül, repository kökündeki `LICENSE.md` dosyasında belirtilen **MIT Lisans�
 
 ## Bonus Özellikler
 
-- **Braided maze (dead-end'siz non-perfect labirent):** `maze_analyzer.py --max-dead-ends 0` ile doğrulanabilecek, hiç çıkmazı olmayan, tamamen "örülmüş" bir non-perfect board hedefi bonus olarak değerlendirilmektedir.
+- **Braided maze (dead-end'siz non-perfect labirent):** `generate_imperfect()`, tespit ettiği her dead-end hücresinden kapalı bir komşuya doğru bir duvar açtığı için pratikte neredeyse hiç dead-end bırakmıyor; test edilen örneklerde `maze_analyzer.py --max-dead-ends 0` ile "bonus-grade (perfectly braided)" sonucu alındı.
 - **Çoklu algoritma desteği** ve **üretim sırasında animasyon** subject'te önerilen diğer bonus fikirlerdir; bu projede öncelik verilmemiştir (bkz. "Yol Haritası").
 
-## Yol Haritası / Mevcut Durum
+## Mevcut Durum
 
-- `check_full_connectivity` adımının (BFS/flood-fill ile, `get_open_neighbors` yeniden kullanılarak) tamamlanması.
-- Gerçek `RecursionError` testleriyle `MAX_DIMENSION` / `MAX_CELLS` sınırlarının belirlenip `config/validate.py`'a eklenmesi.
-- `ali` ve `bilal` dallarının `main`'e nihai merge'ü: `config.txt` farklılıklarının çözülmesi ve Bilal'in `main.py` dosyasının (subject'in zorunlu kıldığı `a_maze_ing.py` giriş noktasıyla çakıştığı için) kaldırılması/gözden geçirilmesi gerekiyor.
+`ali` ve `bilal` dalları `main`'e merge edildi; proje mandatory kısım itibarıyla tamamlanmış durumda: config parser/validator, `MAX_DIMENSION`/`MAX_CELLS` sınırları, `check_entry_exit_not_blocked`, DFS tabanlı perfect/imperfect üretim, "42" deseni, hexadecimal çıktı, BFS ile en kısa yol, terminal ASCII/ANSI render ve interaktif menü, `mazegen` paketi, `maze_analyzer.py`, 17 pytest testi, flake8/mypy (subject'in istediği bayraklarla) temiz şekilde çalışıyor.
 
-*(Bu bölüm, teslimden önce projenin gerçek son durumuna göre güncellenmelidir.)*
+Teslimden önce hâlâ bakılması gereken noktalar:
+
+- **Paket dosyasının konumu:** Subject, `mazegen-*.whl`/`.tar.gz` dosyasının repository'nin **kökünde** olmasını istiyor; şu an `dist/` klasöründe. `python -m build --outdir .` ile köke build edilmeli ya da build sonrası dosya köke taşınıp commit'lenmeli.
+
+
+*(Bu bölüm, teslimden önce projenin gerçek son durumuna göre tekrar gözden geçirilmelidir.)*
 
 ## Kaynaklar (Resources)
 

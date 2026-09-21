@@ -103,7 +103,7 @@ def main() -> None:
 
         run_menu(maze, cfg)
 
-    except ValueError as Error:
+    except (ValueError, OSError) as Error:
         print(f"Error: {Error}")
 
 
