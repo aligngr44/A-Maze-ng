@@ -12,11 +12,6 @@ WEST = 8
 RESET = "\033[0m"
 
 
-def fg(r: int, g: int, b: int) -> str:
-    """Return the ANSI escape code setting the terminal foreground colour."""
-    return f"\033[38;2;{r};{g};{b}m"
-
-
 def bg(r: int, g: int, b: int) -> str:
     """Return the ANSI escape code setting the terminal background colour."""
     return f"\033[48;2;{r};{g};{b}m"
