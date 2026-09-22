@@ -201,16 +201,6 @@ Subject'in izin verdiği iki seçenekten (terminal ASCII / MLX) **terminal rende
 - **Braided maze (dead-end'siz non-perfect labirent):** `generate_imperfect()`, tespit ettiği her dead-end hücresinden kapalı bir komşuya doğru bir duvar açtığı için pratikte neredeyse hiç dead-end bırakmıyor; test edilen örneklerde `maze_analyzer.py --max-dead-ends 0` ile "bonus-grade (perfectly braided)" sonucu alındı.
 - **Çoklu algoritma desteği** ve **üretim sırasında animasyon** subject'te önerilen diğer bonus fikirlerdir; bu projede öncelik verilmemiştir (bkz. "Yol Haritası").
 
-## Mevcut Durum
-
-`ali` ve `bilal` dalları `main`'e merge edildi; proje mandatory kısım itibarıyla tamamlanmış durumda: config parser/validator, `MAX_DIMENSION`/`MAX_CELLS` sınırları, `check_entry_exit_not_blocked`, DFS tabanlı perfect/imperfect üretim, "42" deseni, hexadecimal çıktı, BFS ile en kısa yol, terminal ASCII/ANSI render ve interaktif menü, `mazegen` paketi, `maze_analyzer.py`, 17 pytest testi, flake8/mypy (subject'in istediği bayraklarla) temiz şekilde çalışıyor.
-
-Teslimden önce hâlâ bakılması gereken noktalar:
-
-- **Paket dosyasının konumu:** Subject, `mazegen-*.whl`/`.tar.gz` dosyasının repository'nin **kökünde** olmasını istiyor; şu an `dist/` klasöründe. `python -m build --outdir .` ile köke build edilmeli ya da build sonrası dosya köke taşınıp commit'lenmeli.
-
-
-*(Bu bölüm, teslimden önce projenin gerçek son durumuna göre tekrar gözden geçirilmelidir.)*
 
 ## Kaynaklar (Resources)
 
