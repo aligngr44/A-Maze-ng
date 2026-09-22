@@ -216,5 +216,6 @@ Subject'in izin verdiği iki seçenekten (terminal ASCII / MLX) **terminal rende
 - Labirent üretim algoritması seçeneklerinin (recursive backtracking vs. Prim's vs. Kruskal's) karşılaştırılıp nihai yaklaşımın gerekçelendirilmesi.
 - Kod yapısının gözden geçirilmesi ve hataların (örn. bağlantılılık kontrolündeki bir komşu-karşılaştırma hatası) tüm bir özelliği üretmek yerine tespit edilmesi.
 - Bu README'nin, ekibin kendi çalışma notlarından ve subject gereksinimlerinden derlenip düzenlenmesi.
+- Docstringlerin Düzenlenmesi.
 
 Hiçbir AI tarafından üretilen kod, onu commit eden kişi tarafından okunup test edilip anlaşılmadan projeye dahil edilmedi.
