@@ -2,7 +2,6 @@
 
 *This project has been created as part of the 42 curriculum by bigungor, algungor.*
 
-> Not: Subject bu satırın tam olarak bu İngilizce kalıpla ("This project has been created as part of the 42 curriculum by ...") yazılmasını istiyor; bu yüzden README'nin geri kalanı Türkçe olsa da bu ilk satır olduğu gibi bırakılmalı.
 
 ## Açıklama (Description)
 
