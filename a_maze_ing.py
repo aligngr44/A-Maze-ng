@@ -47,7 +47,7 @@ def run_menu(maze: MazeGenerator, cfg: Config) -> None:
         print_pixel_grid(pixels, cfg, color_index, path if show_path else None)
 
         print("=== A-Maze-ing ===")
-        print("1. Re-generate a new maze")
+        print("1. Re-generate a new maze (seed + 1)")
         print("2. Show / Hide the shortest path")
         print("3. Rotate the wall colours")
         print("4. Quit")

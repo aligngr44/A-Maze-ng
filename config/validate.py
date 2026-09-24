@@ -1,7 +1,6 @@
 from .read_file import Config
 
-# GECICI/tahmini sinirlar - maze uretim algoritmasi yazildiktan sonra
-# gercek RecursionError testiyle kesinlestirilmeli.
+
 MAX_DIMENSION = 100
 MAX_CELLS_PERFECT = 40000
 MAX_CELLS_NON_PERFECT = 40000

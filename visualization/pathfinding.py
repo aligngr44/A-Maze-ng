@@ -16,13 +16,13 @@ def get_open_neighbors(
     grid: list[list[int]], width: int, height: int, x: int, y: int
 ) -> list[tuple[str, tuple[int, int]]]:
     """Return (direction, coordinates) for each open, in-bounds neighbor."""
-    cell = grid[y][x]  # 1) bu hücrenin değerini al
-    result = []  # 2) sonuçları biriktireceğin boş liste
+    cell = grid[y][x]
+    result = []
 
     for direction, (bit, dx, dy) in DIRECTIONS.items():
-        if not (cell & bit):  # 3) bu yönün duvarı açık mı?
-            nx, ny = dx + x, dy + y  # 4) komşunun koordinatını hesapla
-            if 0 <= nx < width and 0 <= ny < height:  # 5) sınır içinde mi
+        if not (cell & bit):
+            nx, ny = dx + x, dy + y
+            if 0 <= nx < width and 0 <= ny < height:
                 result.append((direction, (nx, ny)))
 
     return result
@@ -52,7 +52,6 @@ def shortest_path(
                 came_from[neighbor] = (current, direction)
                 queue.append(neighbor)
 
-    # while bitti, şimdi path'i geriye doğru kuralım
     directions = []
     node = exit_
     while node != entry:

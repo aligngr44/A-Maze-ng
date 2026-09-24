@@ -207,6 +207,29 @@ class MazeGenerator:
 
         return closed
 
+    def creates_open_3x3(self) -> bool:
+        """Check if there is a fully open 3x3 area."""
+        for y in range(self.height - 2):
+            for x in range(self.width - 2):
+
+                horizontal_open = True
+                vertical_open = True
+
+                for row in range(y, y + 3):
+                    for col in range(x, x + 2):
+                        if self.grid[row][col] & 2:
+                            horizontal_open = False
+
+                for row in range(y, y + 2):
+                    for col in range(x, x + 3):
+                        if self.grid[row][col] & 4:
+                            vertical_open = False
+
+                if horizontal_open and vertical_open:
+                    return True
+
+        return False
+
     def generate_imperfect(self) -> None:
         """Generate an imperfect maze by adding loops to a perfect maze."""
         self.generate_perfect()
@@ -218,7 +241,15 @@ class MazeGenerator:
 
             if closed_neighbors:
                 nx, ny = self.random.choice(closed_neighbors)
+
+                old_cell = self.grid[y][x]
+                old_neighbor = self.grid[ny][nx]
+
                 self.remove_wall(x, y, nx, ny)
+
+                if self.creates_open_3x3():
+                    self.grid[y][x] = old_cell
+                    self.grid[ny][nx] = old_neighbor
 
     def write_grid(self, filename: str) -> None:
         """Write the maze grid to a file using hexadecimal wall values."""
