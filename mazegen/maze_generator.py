@@ -253,7 +253,7 @@ class MazeGenerator:
 
     def write_grid(self, filename: str) -> None:
         """Write the maze grid to a file using hexadecimal wall values."""
-        with open(filename, "w", encoding="utf-8") as file:
+        with open(filename, "w") as file:
             for row in self.grid:
                 for cell in row:
                     file.write(format(cell, "X"))
